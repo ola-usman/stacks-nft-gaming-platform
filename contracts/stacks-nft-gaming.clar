@@ -44,3 +44,40 @@
     total-rewards: uint 
   }
 )
+
+;; Whitelist for game creators and administrators
+(define-map game-admin-whitelist principal bool)
+
+;; Global variables
+(define-data-var total-game-assets uint u0)
+
+;; Read-only functions for validation
+
+;; Check if sender is a game admin
+(define-read-only (is-game-admin (sender principal))
+  (default-to false (map-get? game-admin-whitelist sender))
+)
+
+;; Validate input string
+(define-read-only (is-valid-string (input (string-ascii 200)))
+  (> (len input) u0)
+)
+
+;; Validate principal
+(define-read-only (is-valid-principal (input principal))
+  (and 
+    (not (is-eq input tx-sender))
+    (not (is-eq input (as-contract tx-sender)))
+  )
+)
+
+;; Enhanced principal validation
+(define-read-only (is-safe-principal (input principal))
+  (and 
+    (is-valid-principal input)
+    (or 
+      (is-game-admin input)
+      (is-some (map-get? leaderboard { player: input }))
+    )
+  )
+)
