@@ -15,3 +15,11 @@
 (define-constant ERR-INVALID-FEE (err u10))
 (define-constant ERR-INVALID-ENTRIES (err u11))
 (define-constant ERR-PLAYER-NOT-FOUND (err u12))
+
+;; Storage for game configuration and state
+(define-data-var game-fee uint u10)
+(define-data-var max-leaderboard-entries uint u50)
+(define-data-var total-prize-pool uint u0)
+
+;; NFT definition
+(define-non-fungible-token game-asset uint)
