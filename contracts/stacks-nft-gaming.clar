@@ -206,3 +206,33 @@
     (ok true)
   )
 )
+
+;; Distribute Bitcoin rewards
+(define-public (distribute-bitcoin-rewards)
+  (let 
+    (
+      (top-players (get-top-players))
+    )
+    (asserts! (is-game-admin tx-sender) ERR-NOT-AUTHORIZED)
+    
+    (try! 
+      (fold distribute-reward 
+        (filter is-valid-reward-candidate top-players) 
+        (ok true)
+      )
+    )
+    
+    (ok true)
+  )
+)
+
+;; Validate reward candidate
+(define-private (is-valid-reward-candidate (player principal))
+  (match (map-get? leaderboard { player: player })
+    stats (and 
+            (> (get score stats) u0)
+            (is-safe-principal player)
+          )
+    false
+  )
+)
