@@ -272,3 +272,35 @@
     u0
   )
 )
+
+;; Get top players (placeholder implementation)
+(define-read-only (get-top-players)
+  (let 
+    (
+      (max-entries (var-get max-leaderboard-entries))
+    )
+    (list 
+      tx-sender
+    )
+  )
+)
+
+;; Initialize game configuration
+(define-public (initialize-game 
+  (entry-fee uint) 
+  (max-entries uint)
+)
+  (begin
+    (asserts! (is-game-admin tx-sender) ERR-NOT-AUTHORIZED)
+    (asserts! (and (>= entry-fee u1) (<= entry-fee u1000)) ERR-INVALID-FEE)
+    (asserts! (and (>= max-entries u1) (<= max-entries u500)) ERR-INVALID-ENTRIES)
+    
+    (var-set game-fee entry-fee)
+    (var-set max-leaderboard-entries max-entries)
+    
+    (ok true)
+  )
+)
+
+;; Initial setup - first admin is contract deployer
+(map-set game-admin-whitelist tx-sender true)
