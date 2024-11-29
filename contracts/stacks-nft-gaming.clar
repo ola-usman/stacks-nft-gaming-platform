@@ -145,3 +145,34 @@
     (nft-transfer? game-asset token-id tx-sender recipient)
   )
 )
+
+;; Player registration
+(define-public (register-player)
+  (let 
+    (
+      (registration-fee (var-get game-fee))
+    )
+    (asserts! 
+      (>= (stx-get-balance tx-sender) registration-fee) 
+      ERR-INSUFFICIENT-FUNDS
+    )
+    
+    (asserts! 
+      (is-none (map-get? leaderboard { player: tx-sender }))
+      ERR-ALREADY-REGISTERED
+    )
+    
+    (try! (stx-transfer? registration-fee tx-sender (as-contract tx-sender)))
+    
+    (map-set leaderboard 
+      { player: tx-sender }
+      {
+        score: u0,
+        games-played: u0,
+        total-rewards: u0
+      }
+    )
+    
+    (ok true)
+  )
+)
