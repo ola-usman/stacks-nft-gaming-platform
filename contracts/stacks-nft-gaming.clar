@@ -23,3 +23,14 @@
 
 ;; NFT definition
 (define-non-fungible-token game-asset uint)
+
+;; Game Asset Metadata Map
+(define-map game-asset-metadata 
+  { token-id: uint }
+  { 
+    name: (string-ascii 50),
+    description: (string-ascii 200),
+    rarity: (string-ascii 20),
+    power-level: uint
+  }
+)
